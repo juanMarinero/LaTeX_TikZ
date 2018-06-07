@@ -1,0 +1,1732 @@
+\documentclass[a4paper,fleqn]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{babel} %separar correctamente las palabras de multitud de idiomas%
+
+\usepackage{calc}
+\usepackage[asymmetric=true,left=15mm, right=5mm, top=10mm,bottom=10mm,headheight=5mm, footskip=5mm,marginparsep=5mm, headsep=5mm,marginparwidth=0mm, includemp, includehead=true, headsep=5mm, includefoot=true]{geometry}
+
+\usepackage{latexsym} % S¶³mbolos
+\usepackage{amssymb} %Soporte para \choose y R, Q y Z de conjuntos
+\usepackage{amsmath,mathtools}%monton de cosas de mates 
+\usepackage{amssymb} %Soporte para \choose y R, Q y Z de conjuntos
+\usepackage{steinmetz}%complex numbers
+\usepackage{chngcntr}
+\usepackage{cancel}
+
+
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{multicol} %Texto a doble columna
+
+\usepackage{epsfig} %imprimir en pdf_mirar prueba.txt [con minúsculas]
+\usepackage{wrapfig}
+\usepackage[rflt]{floatflt}
+
+\usepackage{fixltx2e}%añadir \textsuperscript{} y \textsubscript{} 
+%http://foro.migui.com/smf/index.php/topic,12378.0.html
+%otra opción es usar \text{}
+% uso de \mbox{} Hace que su argumento se mantenga siempre unido bajo cualquier circunstancia, o sea, que no se puede dividir.
+
+\usepackage{setspace}%cambiar el interlineado,etc
+%http://foro.migui.com/smf/index.php/topic,12380.0.html
+
+\usepackage{lipsum}  % to provide "filler" text
+\usepackage{multirow}
+\usepackage{framed}
+\usepackage{tikz}%http://tex.stackexchange.com/questions/57103/phasors-with-tikz
+\usetikzlibrary{calc}
+%\setlength\parindent{}%sangria
+\usepackage{circuitikz}
+\tikzset{help lines/.style={very thin}}
+\tikzset{Karl's grid/.style={help lines,color=blue!50}}
+\usepackage{siunitx}
+
+%%%%%%%%%%%%%%%%% defined "myvoltmeterH"%%%%%%%%%%%%%%%%%%%%%%%%%%
+% an horizontal voltage meter
+%http://tex.stackexchange.com/questions/105864/rotate-voltmeter-circuitikz
+\makeatletter
+\def\pgf@circ@myvoltmeterH@path#1{\pgf@circ@bipole@path{myvoltmeterH}{#1}}
+\tikzset{myvoltmeterH/.style = {\circuitikzbasekey, /tikz/to
+                               path=\pgf@circ@myvoltmeterH@path}}
+\pgfcircdeclarebipole{}{\ctikzvalof{bipoles/voltmeter/height}}{myvoltmeterH}{\ctikzvalof{bipoles/voltmeter/height}}{\ctikzvalof{bipoles/voltmeter/width}}{
+    \def\pgf@circ@temp{right}
+    \ifx\tikz@res@label@pos\pgf@circ@temp
+        \pgf@circ@res@step=-1.2\pgf@circ@res@up
+    \else
+        \def\pgf@circ@temp{below}
+        \ifx\tikz@res@label@pos\pgf@circ@temp
+            \pgf@circ@res@step=-1.2\pgf@circ@res@up
+        \else
+            \pgf@circ@res@step=1.2\pgf@circ@res@up
+        \fi
+    \fi
+
+    \pgfpathmoveto{\pgfpoint{\pgf@circ@res@left}{\pgf@circ@res@zero}}       
+    \pgfpointorigin \pgf@circ@res@other =  \pgf@x  \advance \pgf@circ@res@other by -\pgf@circ@res@up
+    \pgfpathlineto{\pgfpoint{\pgf@circ@res@other}{\pgf@circ@res@zero}}
+    \pgfusepath{draw}
+
+    \pgfsetlinewidth{\pgfkeysvalueof{/tikz/circuitikz/bipoles/thickness}\pgfstartlinewidth}
+
+        \pgfscope
+            \pgfpathcircle{\pgfpointorigin}{.9\pgf@circ@res@up} % change this if you want to touch the wires
+            \pgfusepath{draw}       
+        \endpgfscope    
+
+    \pgfsetlinewidth{\pgfstartlinewidth}
+    \pgftransformrotate{0}
+    \pgfsetarrowsend{latex}
+    \pgfpathmoveto{\pgfpoint{\pgf@circ@res@other}{\pgf@circ@res@down}}
+    \pgfpathlineto{\pgfpoint{-\pgf@circ@res@other}{\pgf@circ@res@up}} % change this if you want to touch the wires
+    %\pgfusepath{draw} % comment this if you don't need the diagonal arrow
+    \pgfsetarrowsend{}
+
+
+    \pgfpathmoveto{\pgfpoint{-\pgf@circ@res@other}{\pgf@circ@res@zero}}
+    \pgfpathlineto{\pgfpoint{\pgf@circ@res@right}{\pgf@circ@res@zero}}
+    %\pgfusepath{draw} % comment this if you don't need the diagonal arrow
+
+    \pgfnode{circle}{center}{\textbf{V}}{}{}
+}
+\makeatother
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%% defined "myvoltmeterV"%%%%%%%%%%%%%%%%%%%%%%%%%%
+% a vertical voltage meter
+%http://tex.stackexchange.com/questions/105864/rotate-voltmeter-circuitikz
+\makeatletter
+\def\pgf@circ@myvoltmeterV@path#1{\pgf@circ@bipole@path{myvoltmeterV}{#1}}
+\tikzset{myvoltmeterV/.style = {\circuitikzbasekey, /tikz/to
+                               path=\pgf@circ@myvoltmeterV@path}}
+\pgfcircdeclarebipole{}{\ctikzvalof{bipoles/voltmeter/height}}{myvoltmeterV}{\ctikzvalof{bipoles/voltmeter/height}}{\ctikzvalof{bipoles/voltmeter/width}}{
+    \def\pgf@circ@temp{right}
+    \ifx\tikz@res@label@pos\pgf@circ@temp
+        \pgf@circ@res@step=-1.2\pgf@circ@res@up
+    \else
+        \def\pgf@circ@temp{below}
+        \ifx\tikz@res@label@pos\pgf@circ@temp
+            \pgf@circ@res@step=-1.2\pgf@circ@res@up
+        \else
+            \pgf@circ@res@step=1.2\pgf@circ@res@up
+        \fi
+    \fi
+
+    \pgfpathmoveto{\pgfpoint{\pgf@circ@res@left}{\pgf@circ@res@zero}}       
+    \pgfpointorigin \pgf@circ@res@other =  \pgf@x  \advance \pgf@circ@res@other by -\pgf@circ@res@up
+    \pgfpathlineto{\pgfpoint{\pgf@circ@res@other}{\pgf@circ@res@zero}}
+    \pgfusepath{draw}
+
+    \pgfsetlinewidth{\pgfkeysvalueof{/tikz/circuitikz/bipoles/thickness}\pgfstartlinewidth}
+
+        \pgfscope
+            \pgfpathcircle{\pgfpointorigin}{.9\pgf@circ@res@up} % change this if you want to touch the wires
+            \pgfusepath{draw}       
+        \endpgfscope    
+
+    \pgfsetlinewidth{\pgfstartlinewidth}
+    \pgftransformrotate{90}
+    \pgfsetarrowsend{latex}
+    \pgfpathmoveto{\pgfpoint{\pgf@circ@res@other}{\pgf@circ@res@down}}
+    \pgfpathlineto{\pgfpoint{-\pgf@circ@res@other}{\pgf@circ@res@up}} % change this if you want to touch the wires
+    %\pgfusepath{draw} % comment this if you don't need the diagonal arrow
+    \pgfsetarrowsend{}
+
+
+    \pgfpathmoveto{\pgfpoint{-\pgf@circ@res@other}{\pgf@circ@res@zero}}
+    \pgfpathlineto{\pgfpoint{\pgf@circ@res@right}{\pgf@circ@res@zero}}
+    %\pgfusepath{draw} % comment this if you don't need the diagonal arrow
+
+    \pgfnode{circle}{center}{\textbf{V}}{}{}
+}
+\makeatother
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%% defined "myammeterH"%%%%%%%%%%%%%%%%%%%%%%%%%%
+%http://tex.stackexchange.com/questions/105864/rotate-voltmeter-circuitikz
+\makeatletter
+\def\pgf@circ@myammeterH@path#1{\pgf@circ@bipole@path{myammeterH}{#1}}
+\tikzset{myammeterH/.style = {\circuitikzbasekey, /tikz/to
+                               path=\pgf@circ@myammeterH@path}}
+\pgfcircdeclarebipole{}{\ctikzvalof{bipoles/ammeter/height}}{myammeterH}
+    {\ctikzvalof{bipoles/ammeter/height}}{\ctikzvalof{bipoles/ammeter/width}}
+{
+  \def\pgf@circ@temp{right}
+  \ifx\tikz@res@label@pos\pgf@circ@temp
+    \pgf@circ@res@step=-1.2\pgf@circ@res@up
+  \else
+    \def\pgf@circ@temp{below}
+    \ifx\tikz@res@label@pos\pgf@circ@temp
+      \pgf@circ@res@step=-1.2\pgf@circ@res@up
+    \else
+      \pgf@circ@res@step=1.2\pgf@circ@res@up
+    \fi
+  \fi
+
+  \pgfpathmoveto{\pgfpoint{\pgf@circ@res@left}{\pgf@circ@res@zero}}     
+  \pgfpointorigin   \pgf@circ@res@other =  \pgf@x
+  \advance \pgf@circ@res@other by -\pgf@circ@res@up
+  \pgfpathlineto{\pgfpoint{\pgf@circ@res@other}{\pgf@circ@res@zero}}
+  \pgfusepath{draw}
+
+  \pgfsetlinewidth{\pgfkeysvalueof{/tikz/circuitikz/bipoles/thickness}
+                   \pgfstartlinewidth}
+
+  \pgfscope
+    \pgfpathcircle{\pgfpointorigin}{\pgf@circ@res@up}
+    \pgfusepath{draw}       
+  \endpgfscope  
+
+  \pgfsetlinewidth{\pgfstartlinewidth}
+  \pgftransformrotate{0} % rotate the label
+  %\pgfpathmoveto{\pgfpoint{-\pgf@circ@res@other}{.8\pgf@circ@res@up}}
+  %\pgfpathlineto{\pgfpoint{\pgf@circ@res@other}{.8\pgf@circ@res@down}}
+  %\pgfusepath{draw}
+  \pgfnode{circle}{center}{\textbf{A}}{}{}
+  \pgfscope
+    % \pgftransformshift{\pgfpoint{-\pgf@circ@res@other}{.8\pgf@circ@res@up}}
+    % \pgftransformrotate{45}
+    % \pgfnode{currarrow}{center}{}{}{\pgfusepath{stroke}}
+  \endpgfscope
+
+  \pgfpathmoveto{\pgfpoint{-\pgf@circ@res@other}{\pgf@circ@res@zero}}
+  \pgfpathlineto{\pgfpoint{\pgf@circ@res@right}{\pgf@circ@res@zero}}
+  \pgfusepath{draw}
+
+  \pgfusepath{stroke}   
+}
+\makeatother
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%% defined "myammeterV"%%%%%%%%%%%%%%%%%%%%%%%%%%
+%http://tex.stackexchange.com/questions/105864/rotate-voltmeter-circuitikz
+\makeatletter
+\def\pgf@circ@myammeterV@path#1{\pgf@circ@bipole@path{myammeterV}{#1}}
+\tikzset{myammeterV/.style = {\circuitikzbasekey, /tikz/to
+                               path=\pgf@circ@myammeterV@path}}
+\pgfcircdeclarebipole{}{\ctikzvalof{bipoles/ammeter/height}}{myammeterV}
+    {\ctikzvalof{bipoles/ammeter/height}}{\ctikzvalof{bipoles/ammeter/width}}
+{
+  \def\pgf@circ@temp{right}
+  \ifx\tikz@res@label@pos\pgf@circ@temp
+    \pgf@circ@res@step=-1.2\pgf@circ@res@up
+  \else
+    \def\pgf@circ@temp{below}
+    \ifx\tikz@res@label@pos\pgf@circ@temp
+      \pgf@circ@res@step=-1.2\pgf@circ@res@up
+    \else
+      \pgf@circ@res@step=1.2\pgf@circ@res@up
+    \fi
+  \fi
+
+  \pgfpathmoveto{\pgfpoint{\pgf@circ@res@left}{\pgf@circ@res@zero}}     
+  \pgfpointorigin   \pgf@circ@res@other =  \pgf@x
+  \advance \pgf@circ@res@other by -\pgf@circ@res@up
+  \pgfpathlineto{\pgfpoint{\pgf@circ@res@other}{\pgf@circ@res@zero}}
+  \pgfusepath{draw}
+
+  \pgfsetlinewidth{\pgfkeysvalueof{/tikz/circuitikz/bipoles/thickness}
+                   \pgfstartlinewidth}
+
+  \pgfscope
+    \pgfpathcircle{\pgfpointorigin}{\pgf@circ@res@up}
+    \pgfusepath{draw}       
+  \endpgfscope  
+
+  \pgfsetlinewidth{\pgfstartlinewidth}
+  \pgftransformrotate{90} % rotate the label
+  %\pgfpathmoveto{\pgfpoint{-\pgf@circ@res@other}{.8\pgf@circ@res@up}}
+  %\pgfpathlineto{\pgfpoint{\pgf@circ@res@other}{.8\pgf@circ@res@down}}
+  %\pgfusepath{draw}
+  \pgfnode{circle}{center}{\textbf{A}}{}{}
+  \pgfscope
+    % \pgftransformshift{\pgfpoint{-\pgf@circ@res@other}{.8\pgf@circ@res@up}}
+    % \pgftransformrotate{45}
+    % \pgfnode{currarrow}{center}{}{}{\pgfusepath{stroke}}
+  \endpgfscope
+
+  \pgfpathmoveto{\pgfpoint{-\pgf@circ@res@other}{\pgf@circ@res@zero}}
+  \pgfpathlineto{\pgfpoint{\pgf@circ@res@right}{\pgf@circ@res@zero}}
+  \pgfusepath{draw}
+
+  \pgfusepath{stroke}   
+}
+\makeatother
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{inconsolata}
+\newcommand{\mychapter}[2]{
+    \setcounter{chapter}{#1}
+    \setcounter{section}{0}
+    \chapter*{#2}
+    \addcontentsline{toc}{chapter}{#2}
+}
+\usepackage[nottoc]{tocbibind}
+\usepackage{fancybox}
+\usepackage{color}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ELECTROTECNIA\\
+
+\begin{center}
+\begin{tikzpicture}[ american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries CF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to [open, v^=$V_{AB}$] (2,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{minipage}[c]{5cm}
+\begin{flushleft}
+\centering
+\vspace{2mm}
+{\Large ANULAR FUENTES}
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[c]{8cm}
+\begin{minipage}[c]{2cm}
+\centering
+\vspace{-3mm}
+\begin{circuitikz}[ american currents]
+	\draw(0,0) to[ I, i=$I$] (2,0);
+\end{circuitikz}
+\end{minipage}
+\begin{minipage}[c]{1cm}
+\begin{flushleft}
+\centering
+\vspace{2mm}
+{\huge$\,\Rightarrow\,$}
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[t][][b]{2cm}
+\centering
+\begin{circuitikz}
+\draw
+(0,0) to[short, -*] (1,0)
+(1,0) to[short] (2,0)
+(2,0) to[short, *-] (3,0)
+;\end{circuitikz}
+\end{minipage}\vspace{7mm}\\
+\begin{minipage}[c]{2cm}
+\centering
+\vspace{-3mm}
+\begin{circuitikz}[ american voltages]
+	\draw (0,0) to[sV=$V$] (2,0);
+\end{circuitikz}
+\end{minipage}
+\begin{minipage}[c]{1cm}
+\begin{flushleft}
+\centering
+\vspace{2mm}
+{\huge$\,\Rightarrow\,$}
+\end{flushleft}
+\end{minipage}
+\begin{minipage}[t][][b]{2cm}
+\centering
+\begin{circuitikz}
+\draw
+(0,0) to[short, -*] (1,0)
+(1,0) to[open] (2,0)
+(2,0) to[short, *-] (3,0)
+;\end{circuitikz}
+\end{minipage}
+\end{minipage}
+\end{center}
+
+
+\begin{center}
+\begin{tikzpicture}
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries SF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\,\,\,mido\,\,
+\begin{tikzpicture}[ european resistors]
+    \draw    
+		% block to terminals
+        (0,0.75) to[short, -*] (1,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (0,-0.75) to[short, -*] (1,-0.75)
+				(0,0.75) to [R, l_=$Z_{AB}$] (0,-0.75)
+    {[ anchor=south east] (1,0.75) node {A} (1,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[ european resistors, american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries CF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to[short] (3,0.75)
+				(2,-0.75) to[short] (3,-0.75)
+				(3,0.75) to [R, l_=$Z$] (3,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\,\,\,equivale a\,\,
+\begin{tikzpicture}[ european resistors, american voltages]
+    \draw    
+		% block to terminals
+				(0,0.75) to [R, l_=$Z_{th}$] (0,-0.75)
+				(0,0.75) to[short] (1,0.75)
+				(1,0.75) to [sV=$V_{th}\,+$] (2,0.75)
+				(2,0.75) to[short, -*] (3,0.75)
+				(0,-0.75) to[short, -*] (3,-0.75)
+				(3,0.75) to[short] (4,0.75)
+				(3,-0.75) to[short] (4,-0.75)
+				(4,0.75) to [R, l_=$Z$] (4,-0.75)
+    {[ anchor=south east] (3,0.75) node {A} (3,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\end{center}
+
+\begin{tikzpicture}[european resistors,american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries CF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to[short, i=$I_0$] (3,0.75)
+				(2,-0.75) to[short] (3,-0.75)
+				(3,0.75) to [R, l_=$Z$] (3,-0.75)
+				
+				(3,0.75) to [open, v^=$\,\,V_0$] (3,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\hspace{1mm}
+\begin{tikzpicture}
+	\draw
+		(0,0) to[open] (1,1)
+		(0,0.8) to[short] (1,0.8)
+		(0,1.2) to[short] (1,1.2)
+		;
+\end{tikzpicture}
+\hspace{1mm}
+\begin{tikzpicture}[european resistors, american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries CF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to[short, i=$I_1$] (3,0.75)
+				(2,-0.75) to[short] (4.5,-0.75)
+				(3,0.75) to [sV=$+\,V_{AB}$] (4,0.75)
+				(4,0.75) to[short] (4.5,0.75)
+				
+				(4.5,0.75) to [R, l_=$Z$] (4.5,-0.75)
+				
+				(4.5,0.75) to [open, v^=$\,\,V_1$] (4.5,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\hspace{1mm}
+\begin{tikzpicture}
+	\draw
+		(0,0) to[open] (1,1)
+		(0,1) to[short] (1,1)
+		(0.5,0.5) to[short] (0.5,1.5)
+		;
+\end{tikzpicture}
+\hspace{1mm}
+\begin{tikzpicture}[european resistors, american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries SF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to[short, i=$I_2$] (3,0.75)
+				(2,-0.75) to[short] (4.5,-0.75)
+				(3,0.75) to [sV=$V_{AB}\,+$] (4,0.75)
+				(4,0.75) to[short] (4.5,0.75)
+				
+				(4.5,0.75) to [R, l_=$Z$] (4.5,-0.75)
+				
+				(4.5,0.75) to [open, v^=$\,\,V_2$] (4.5,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}\vspace{5mm}
+
+\begin{center}
+\begin{tikzpicture}[ european resistors, american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries CF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to[short] (3,0.75)
+				(2,-0.75) to[short] (3,-0.75)
+				(3,0.75) to [R, l_=$Z$] (3,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\,\,\,equivale a\,\,
+\begin{tikzpicture}[ european resistors, american voltages ]
+    \draw    
+		% block to terminals
+				(0,0.75) to [R, l_=$Z_{th}$] (0,-0.75)
+				(0,0.75) to[short] (1,0.75)
+				(1,0.75) to [sV=$V_{th}\,+$] (2,0.75)
+				(2,0.75) to[short, -*] (3,0.75)
+				(0,-0.75) to[short, -*] (3,-0.75)
+				(3,0.75) to[short] (4,0.75)
+				(3,-0.75) to[short] (4,-0.75)
+				(4,0.75) to [R, l_=$Z$] (4,-0.75)
+    {[ anchor=south east] (3,0.75) node {A} (3,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[ american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries CF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to [open, v^=$V_{AB}$] (2,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\hspace{5mm}
+\begin{tikzpicture}[european resistors, american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries CF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to[short, i=$I_1$] (3,0.75)
+				(2,-0.75) to[short] (4.5,-0.75)
+				(3,0.75) to [sV=$+\,V_{AB}$] (4,0.75)
+				(4,0.75) to[short] (4.5,0.75)
+				
+				(4.5,0.75) to [R, l_=$Z$] (4.5,-0.75)
+				
+				(4.5,0.75) to [open, v^=$\,\,V_1$] (4.5,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[european resistors, american voltages]
+    \draw
+		(0,0) to[short, *-] (1,0)
+		(0,2) to[short, *-] (1,2)
+		(1,0) to [R, l_=$Z_1$] (1,2)
+		(1,2) to [R, l_=$Z_2$] (3,2)
+		(3,2) to [sV=$\begin{array}{ll}+\\ V\end{array}$] (3,0)
+		(1,0) to[short](3,0)
+		
+		(0,2) to [open, v=$\,\,V_{AB}$] (0,0)
+				
+    {[ anchor=south east] (0,2) node {A} (0,0) node {B}}
+		;
+\end{tikzpicture}
+\hspace{10mm}
+\begin{tikzpicture}[european resistors, american voltages]
+    \draw
+		(0,0) to[short, *-] (1,0)
+		(0,2) to[short, *-] (1,2)
+		(1,0) to [R, l_=$Z_1$] (1,2)
+		(1,2) to [R, l_=$Z_2$] (3,2)
+		(3,2) to [sV=$\begin{array}{ll}+\\ V\end{array}$] (3,0)
+		(1,0) to[short](3,0)
+			
+		(0,0) to[short] (-2,0)
+		(-2,0) to[sV=$\begin{array}{rr}+\\ V_{AB}\end{array}$] (-2,2)
+		(-2,2) to [R, l_=$Z$] (0,2)
+						
+    {[ anchor=south east] (0,2) node {A} (0,0) node {B}}
+		;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[ american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries CF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to [short, i^=$I_{cc}$] (2,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[ european resistors, american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries CF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to[short] (3,0.75)
+				(2,-0.75) to[short] (3,-0.75)
+				(3,0.75) to [R, l_=$Z$] (3,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\,\,\,equivale a\,\,
+\begin{tikzpicture}[ european resistors, american voltages, american currents ]
+    \draw    
+		% block to terminals
+				(0,0.75) to [R, l_=$Z_N$] (0,-0.75)
+				(1.5,-0.75) to [I=$I_N$] (1.5,0.75)
+				(0,0.75) to[short, -*] (3,0.75)
+				(0,-0.75) to[short, -*] (3,-0.75)
+				(3,0.75) to[short] (4,0.75)
+				(3,-0.75) to[short] (4,-0.75)
+				(4,0.75) to [R, l_=$Z$] (4,-0.75)
+    {[ anchor=south east] (3,0.75) node {A} (3,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[ european resistors, american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries CF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to[short] (3,0.75)
+				(2,-0.75) to[short] (3,-0.75)
+				(3,0.75) to [R, l_=$Z$] (3,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\,\,\,equivale a\,\,
+\begin{tikzpicture}[ european resistors, american voltages, american currents ]
+    \draw    
+		% block to terminals
+				(0,0.75) to [R, l_=$Z_N$] (0,-0.75)
+				(1.5,-0.75) to [I=$I_N$] (1.5,0.75)
+				(0,0.75) to[short, -*] (3,0.75)
+				(0,-0.75) to[short, -*] (3,-0.75)
+				(3,0.75) to[short] (4,0.75)
+				(3,-0.75) to[short] (4,-0.75)
+				(4,0.75) to [R, l_=$Z$] (4,-0.75)
+    {[ anchor=south east] (3,0.75) node {A} (3,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\end{center}
+
+\begin{tikzpicture}[european resistors,american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries CF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to[short, i=$I_0$] (3,0.75)
+				(2,-0.75) to[short] (3,-0.75)
+				(3,0.75) to [R, l_=$Z$] (3,-0.75)
+				
+				(3,0.75) to [open, v^=$\,\,V_0$] (3,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\hspace{1mm}
+\begin{tikzpicture}
+	\draw
+		(0,0) to[open] (1,1)
+		(0,0.8) to[short] (1,0.8)
+		(0,1.2) to[short] (1,1.2)
+		;
+\end{tikzpicture}
+\hspace{1mm}
+\begin{tikzpicture}[european resistors, american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries CF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to[short, i=$I_1$] (3,0.75)
+				(2,-0.75) to[short] (4.5,-0.75)
+				(3,0.75) to [sV=$+\,V_{AB}$] (4,0.75)
+				(4,0.75) to[short] (4.5,0.75)
+				
+				(4.5,0.75) to [R, l_=$Z$] (4.5,-0.75)
+				
+				(4.5,0.75) to [open, v^=$\,\,V_1$] (4.5,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}
+\hspace{1mm}
+\begin{tikzpicture}
+	\draw
+		(0,0) to[open] (1,1)
+		(0,1) to[short] (1,1)
+		(0.5,0.5) to[short] (0.5,1.5)
+		;
+\end{tikzpicture}
+\hspace{1mm}
+\begin{tikzpicture}[european resistors, american voltages]
+    \coordinate (CircuitoLinealPasivo) at (0.5,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries SF};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, -*] (2,0.75) % a.40= pto que corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero su 0.75 pq queda mejor
+        (a.320) to[short, -*] (2,-0.75)						
+				(2,0.75) to[short, i=$I_2$] (3,0.75)
+				(2,-0.75) to[short] (4.5,-0.75)
+				(3,0.75) to [sV=$V_{AB}\,+$] (4,0.75)
+				(4,0.75) to[short] (4.5,0.75)
+				
+				(4.5,0.75) to [R, l_=$Z$] (4.5,-0.75)
+				
+				(4.5,0.75) to [open, v^=$\,\,V_2$] (4.5,-0.75)
+				
+    {[ anchor=south east] (2,0.75) node {A} (2,-0.75) node {B}}
+		;
+\end{tikzpicture}\vspace{5mm}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+SEE\\
+
+\begin{center}
+\begin{tikzpicture}[ european resistors, american voltages]\shorthandoff{> <}
+    \draw    
+		% block to terminals
+				(0,0) to [sV] (0,2) 
+				(0,0) to [open, v_>=\hspace{3mm}$\overline{E}_{1A}$] (0,2) 
+					to [short, i=$\overline{I}_A$] (3,2) 
+					to [R, l^=$\overline{Z}_L$] (4,2)
+					to [short] (7,2)
+					to [R, v_<=$\overline{E}_{2A}$] (7,0)				
+				(0,0) to [sV] (1.73,-1) 
+				(0,0) to [open, v_>=\hspace{-9mm}$\overline{E}_{1B}$] (1.73,-1) 
+					to [short, i=$\overline{I}_B$] (3,-1) 
+					to [R, l^=$\overline{Z}_L$] (4,-1)
+					to [short] (5.27,-1)
+					to [R, v_<=$\overline{E}_{2B}$] (7,0)
+				(0,0) to [sV] (-1.73,-1) 
+				(0,0) to [open, v_>=\hspace{-9mm}$\overline{E}_{1C}$] (-1.73,-1)
+					to [short] (-1.73,-2)
+					to [short, i=$\overline{I}_C$] (3,-2) 
+					to [R, l^=$\overline{Z}_L$] (4,-2)
+					to [short] (8.73,-2)
+					to [short] (8.73,-1)
+					to [R, v_<=$\overline{E}_{2C}$] (7,0)	
+		;
+\end{tikzpicture}
+\end{center}
+
+\begin{tikzpicture}[ european resistors, american voltages]\shorthandoff{> <}
+    \draw    
+		% block to terminals
+				(0,0) to[short, i=$\overline{I}_1$, o-] (1,0) to [R, l^=$Z\,\phase{\beta}\vspace{1mm}$] (2,0) to[short, i=$\overline{I}_2$, -o] (3,0)
+				(0,-2) to [short, o-o] (3,-2)
+				(0,-2) to [open, v^>=$\overline{E}_1$] (0,0)
+				(3,-2) to [open, v_>=$\overline{E}_2$] (3,0)
+		;
+\end{tikzpicture}
+
+\begin{tikzpicture}[european resistors,american voltages]\shorthandoff{> <}
+    \coordinate (CircuitoLinealPasivo) at (0,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {\bfseries Q};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, i^>=$\overline{I}_2$, -o] (3,0.75)% a.40= pto q corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero uso 0.75
+        (a.320) to[short, -o] (3,-0.75)						
+				(a.140) to[short, i_<=$\overline{I}_1$, -o] (-3,0.75)% 180º-40º=140º
+        (a.220) to[short, -o] (-3,-0.75)
+				
+				(3,-0.75) to [open, v_>=$\overline{E}_2$] (3,0.75)
+				(-3,-0.75) to [open, v^>=$\overline{E}_1$] (-3,0.75)
+				;
+\end{tikzpicture}
+
+\begin{center}
+\begin{tikzpicture}[ european resistors, american voltages]\shorthandoff{> <}
+    \draw    
+		% block to terminals
+				(0,0) to [sV] (0,2) 
+				(0,0) to [open, v_>=\hspace{3mm}$\overline{E}_{1A}$] (0,2) 
+					to [short, i=$\overline{I}_{1A}$] (3,2) 
+					to [R, l^=$\overline{Z}_u\,l$] (4,2)
+					to [short, i=$\overline{I}_{2A}$] (7,2)
+					to [R, v_<=$\overline{E}_{2A}$] (7,0)				
+				(0,0) to [sV] (1.73,-1) 
+				(0,0) to [open, v_>=\hspace{-9mm}$\overline{E}_{1B}$] (1.73,-1) 
+					to [short, i=$\overline{I}_{1B}$] (3,-1) 
+					to [R, l^=$\overline{Z}_u\,l$] (4,-1)
+					to [short,  i=$\overline{I}_{2B}$] (5.27,-1)
+					to [R, v_<=$\overline{E}_{2B}$] (7,0)
+				(0,0) to [sV] (-1.73,-1) 
+				(0,0) to [open, v_>=\hspace{-9mm}$\overline{E}_{1C}$] (-1.73,-1)
+					to [short] (-1.73,-2)
+					to [short, i=$\overline{I}_{1C}$] (3,-2) 
+					to [R, l_=$\overline{Z}_u\,l$] (4,-2)
+					to [short,  i=$\overline{I}_{2C}$] (8.73,-2)
+					to [short] (8.73,-1)
+					to [R, v_<=$\overline{E}_{2C}$] (7,0)	
+				
+				(2.5,2) to [short] (2.5,2.5)
+					to [R, l^=$\overline{Y}_u\,l$] (2.5,4) 
+				(2.5,4) to node [ground, rotate = 180]{} (2.5,4)
+				
+				(2.5,-1) to [short] (2.5,-0.5)
+					to [R, l^=$\overline{Y}_u\,l$] (2.5,1) 
+				(2.5,1) to node [ground, rotate = 180]{} (2.5,1)
+				
+				(2.5,-2) to [short] (2.5,-2.5) 
+					to [R, l^=$\overline{Y}_u\,l$] (2.5,-4) 
+				(2.5,-4) to node [ground]{} (2.5,-4)
+				
+		;
+\end{tikzpicture}
+\hspace{5mm}
+\begin{tikzpicture}[european resistors,american voltages]\shorthandoff{> <}
+    \draw    
+		    (0,0) to[short, i^>=$\overline{I}_1$, o-] (2,0)
+					to [R, l^=$\overline{Z}_{u}\,l$] (4,0)
+					to[short, i^>=$\overline{I}_2$, -o] (5,0)
+				(0,-2) to[short, o-o] (5,-2)
+				
+				(2,-2) to[R, l_=$\overline{Y}_{u}\,l$] (2,0)
+				
+				(0,-2) to [open, v^>=\hspace{3mm}$\overline{E}_{1}$] (0,0) 
+				(5,-2) to [open, v_>=\hspace{3mm}$\overline{E}_{2}$] (5,0) 
+				;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[ european resistors, american voltages]\shorthandoff{> <}
+    \draw    
+				(0,0) to [sV] (0,2) 
+				(0,0) to [open, v_>=\hspace{3mm}$\overline{E}_{1A}$] (0,2) 
+					to [short, i=$\overline{I}_{1A}$] (3,2) 
+					to [R, l^=$\overline{Z}_u\,\text{d}x$] (5,2)
+					to [R, l^=$\overline{Z}_u\,\text{d}x$] (7,2)
+					to [R, l^=$\overline{Z}_u\,\text{d}x$] (9,2)
+					
+				(11,2) to [short, i=$\overline{I}_{2A}$] (14,2)
+					to [R, v_<=$\overline{E}_{2A}$] (14,0)			
+						
+				(0,0) to [sV] (1.73,-1) 
+				(0,0) to [open, v_>=\hspace{-9mm}$\overline{E}_{1B}$] (1.73,-1) 
+					to [short, i=$\overline{I}_{1B}$] (3,-1) 
+					to [R, l^=$\overline{Z}_u\,\text{d}x$] (5,-1)
+					to [R, l^=$\overline{Z}_u\,\text{d}x$] (7,-1)
+					to [R, l^=$\overline{Z}_u\,\text{d}x$] (9,-1)
+					
+				(11,-1) to [short,  i=$\overline{I}_{2B}$] (12.27,-1)
+					to [R, v_<=$\overline{E}_{2B}$] (14,0)
+					
+				(0,0) to [sV] (-1.73,-1) 
+				(0,0) to [open, v_>=\hspace{-9mm}$\overline{E}_{1C}$] (-1.73,-1)
+					to [short] (-1.73,-2)
+					to [short, i=$\overline{I}_{1C}$] (3,-2) 
+					to [R, l_=$\overline{Z}_u\,\text{d}x$] (5,-2)
+					to [R, l_=$\overline{Z}_u\,\text{d}x$] (7,-2)
+					to [R, l_=$\overline{Z}_u\,\text{d}x$] (9,-2)
+					
+				(11,-2) to [short,  i=$\overline{I}_{2C}$] (15.73,-2)
+					to [short] (15.73,-1)
+					to [R, v_<=$\overline{E}_{2C}$] (14,0)	
+				
+				
+					(9.45,2) to [short] (9.5,2)
+					(9.45,-1) to [short] (9.5,-1)
+					(9.45,-2) to [short] (9.5,-2)
+					
+					(9.95,2) to [short] (10,2)
+					(9.95,-1) to [short] (10,-1)
+					(9.95,-2) to [short] (10,-2)
+					
+					(10.45,2) to [short] (10.5,2)
+					(10.45,-1) to [short] (10.5,-1)
+					(10.45,-2) to [short] (10.5,-2)
+									
+				
+				(3,2) to [short] (3,2.5)
+					to [R, l^=$\overline{Y}_u\,\text{d}x$] (3,4) 
+				(3,4) to node [ground, rotate = 180]{} (3,4)
+				(5,2) to [short] (5,2.5)
+					to [R, l^=$\overline{Y}_u\,\text{d}x$] (5,4) 
+				(5,4) to node [ground, rotate = 180]{} (5,4)
+				(7,2) to [short] (7,2.5)
+					to [R, l^=$\overline{Y}_u\,\text{d}x$] (7,4) 
+				(7,4) to node [ground, rotate = 180]{} (7,4)
+				
+				(3,-1) to [short] (3,-0.5)
+					to [R, l^=$\overline{Y}_u\,\text{d}x$] (3,1) 
+				(3,1) to node [ground, rotate = 180]{} (3,1)
+				(5,-1) to [short] (5,-0.5)
+					to [R, l^=$\overline{Y}_u\,\text{d}x$] (5,1) 
+				(5,1) to node [ground, rotate = 180]{} (5,1)
+				(7,-1) to [short] (7,-0.5)
+					to [R, l^=$\overline{Y}_u\,\text{d}x$] (7,1) 
+				(7,1) to node [ground, rotate = 180]{} (7,1)
+				
+				(3,-2) to [short] (3,-2.5) 
+					to [R, l^=$\overline{Y}_u\,\text{d}x$] (3,-4) 
+				(3,-4) to node [ground]{} (3,-4)
+				(5,-2) to [short] (5,-2.5) 
+					to [R, l^=$\overline{Y}_u\,\text{d}x$] (5,-4) 
+				(5,-4) to node [ground]{} (5,-4)
+				(7,-2) to [short] (7,-2.5) 
+					to [R, l^=$\overline{Y}_u\,\text{d}x$] (7,-4) 
+				(7,-4) to node [ground]{} (7,-4)
+				
+		;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[european resistors,american voltages]\shorthandoff{> <}
+    \draw    
+		    (0,0) to[short, i^>=$\overline{I}_1$, o-] (2,0)
+					to [R, l^=$\overline{Z}_{u}\,\text{d}\,x$] (4,0)
+					to [R, l^=$\overline{Z}_{u}\,\text{d}\,x$] (6,0)
+					to [R, l^=$\overline{Z}_{u}\,\text{d}\,x$] (8,0)
+					
+					(8.45,0) to [short] (8.5,0)
+					(8.45,-1) to [short] (8.5,-1)
+					
+					(8.95,0) to [short] (9,0)
+					(8.95,-1) to [short] (9,-1)
+					
+					(9.45,0) to [short] (9.5,0)
+					(9.45,-1) to [short] (9.5,-1)
+					
+					(10,0) to[short, i^>=$\overline{I}_2$, -o] (12,0)
+				
+				(0,-2) to[short, o-o] (12,-2)
+				
+				(2,-2) to[R, l_=$\overline{Y}_{u}\,\text{d}\,x$] (2,0)
+				(4,-2) to[R, l_=$\overline{Y}_{u}\,\text{d}\,x$] (4,0)
+				(6,-2) to[R, l_=$\overline{Y}_{u}\,\text{d}\,x$] (6,0)
+				
+				(0,-2) to [open, v^>=\hspace{3mm}$\overline{E}_{1}$] (0,0) 
+				(12,-2) to [open, v_>=\hspace{3mm}$\overline{E}_{2}$] (12,0) 
+				;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[european resistors,american voltages]\shorthandoff{> <}
+		\draw[dashed](2,1)rectangle(6,-2.5);  
+    \draw    
+		    (0,0) to[short, i^>=$\overline{I}_1$, o-] (2,0)
+					to[short] (3,0)
+					to [R, l^=$\overline{Z}_{\pi}$] (5,0)
+					to[short] (6,0)
+					to[short, i^>=$\overline{I}_2$, -o] (8,0)
+				(0,-2) to[short, o-o] (8,-2)
+				
+				(3,-2) to[R, l^=$\overline{Y}_{\pi}$] (3,0)
+				(5,-2) to[R, l_=$\overline{Y}_{\pi}$] (5,0)
+				
+				(0,-2) to [open, v^>=\hspace{3mm}$\overline{E}_{1}$] (0,0) 
+				(8,-2) to [open, v_>=\hspace{3mm}$\overline{E}_{2}$] (8,0) 
+				;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[european resistors,american voltages]\shorthandoff{> <}
+		\draw[dashed](2,1)rectangle(6,-2.5);  
+    \draw    
+		    (0,0) to[short, i^>=$\overline{I}_1$, o-] (2,0)
+					to[short] (3,0)
+					to [R, l^=${\overline{Z}_{\pi}=\overline{Z}}$] (5,0)
+					to[short] (6,0)
+					to[short, i^>=$\overline{I}_2$, -o] (8,0)
+				(0,-2) to[short, o-o] (8,-2)
+				
+				(3,-2) to[R, l^=${\overline{Y}_{\pi}=\overline{Y}/2}$] (3,0)
+				(5,-2) to[R, l_=${\overline{Y}_{\pi}=\overline{Y}/2}$] (5,0)
+				
+				(0,-2) to [open, v^>=\hspace{3mm}$\overline{E}_{1}$] (0,0) 
+				(8,-2) to [open, v_>=\hspace{3mm}$\overline{E}_{2}$] (8,0) 
+				;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[european resistors,american voltages]\shorthandoff{> <}
+    \coordinate (CircuitoLinealPasivo) at (0,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {
+				$
+				\begin{pmatrix}
+				r
+				&0\vspace{2mm}\\
+				0
+				&1/r
+				\end{pmatrix}
+				$
+				};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short, i^>=$\overline{I}_2$, -o] (2,0.75)% a.40= pto q corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero uso 0.75
+        (a.320) to[short, -o] (2,-0.75)						
+				(a.140) to[short] (-1,0.75)
+					to [R, l_=$\overline{Z}_{1cc}$] (-2.5,0.75)
+					to[short, i_<=$\overline{I}_1$, -o] (-3,0.75)% 180º-40º=140º
+        (a.220) to[short, -o] (-3,-0.75)
+				
+				(2,-0.75) to [open, v_>=$\overline{E}_2$] (2,0.75)
+				(-3,-0.75) to [open, v^>=$\overline{E}_1$] (-3,0.75)
+				;
+\end{tikzpicture}
+\hspace{5mm}
+\begin{tikzpicture}[european resistors,american voltages]\shorthandoff{> <}
+    \coordinate (CircuitoLinealPasivo) at (0,0);
+
+    % Place blocks
+    \begin{scope}
+        \node[name=a, style={draw, european resistors, rectangle,text width=1.5cm, minimum height=2cm, text badly centered}] at (CircuitoLinealPasivo) {
+				$
+				\begin{pmatrix}
+				r
+				&0\vspace{2mm}\\
+				0
+				&1/r
+				\end{pmatrix}
+				$
+				};
+    \end{scope}
+
+    \draw    
+		% block to terminals
+        (a.40) to[short] (1,0.75)
+					to [R, l^=$\overline{Z}_{2cc}$] (2.5,0.75)
+					to[short, i^>=$\overline{I}_2$, -o] (3,0.75)% a.40= pto q corta a recta de centro del rectángulo con 40º a pared exterior % sin(40º)=0.6, pero uso 0.75
+        (a.320) to[short, -o] (3,-0.75)						
+				(a.140) to[short, i_<=$\overline{I}_1$, -o] (-2,0.75)% 180º-40º=140º
+        (a.220) to[short, -o] (-2,-0.75)
+				
+				(3,-0.75) to [open, v_>=$\overline{E}_2$] (3,0.75)
+				(-2,-0.75) to [open, v^>=$\overline{E}_1$] (-2,0.75)
+				;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+	line width=.9pt, 
+  circuitikz/bipoles/thickness=.9,
+	european resistors,
+	american voltages]
+	\shorthandoff{> <}
+    \draw    
+		    (0,0) node[transformer] (T1) {} %trafo en primario ó 1
+				($(T1.base)+(0,.2)$) node{$n_P:n_S$}
+				(T1.A1) to[short] (-1,0)	
+					to[R, l_=${\overline{Z}_{1cc}}$] (-3.5,0)
+					to[short, i_<=$\overline{I}_1$] (-4,0)
+						
+				(T1.A2) to[short] (-4,-2.1)
+				
+				(T1.B1) to[short, i^>=$\overline{I}_2$] (2,0)
+				(T1.B2) to[short] (2,-2.1)
+				
+				(2,-2.1) to[open, v_>=${\overline{E}_{2}}$, o-o] (2,0)
+				(-4,-2.1) to[open, v^>=${\overline{E}_{1}}$, o-o] (-4,0)
+				;
+\end{tikzpicture}
+\hspace{10mm}
+\begin{tikzpicture}[
+	line width=.9pt, 
+  circuitikz/bipoles/thickness=.9,
+	european resistors,
+	american voltages]
+	\shorthandoff{> <}
+    \draw    
+		    (0,0) node[transformer] (T1) {} %trafo en primario ó 1
+				($(T1.base)+(0,.2)$) node{$n_P:n_S$}
+				(T1.B1) to[short] (1,0)	
+					to[R, l^=${\overline{Z}_{2cc}}$] (3.5,0)
+					to[short, i^>=$\overline{I}_2$] (4,0)
+						
+				(T1.B2) to[short] (4,-2.1)
+				
+				(T1.A1) to[short, i_<=$\overline{I}_1$] (-2,0)
+				(T1.A2) to[short] (-2,-2.1)
+				
+				(-2,-2.1) to[open, v^>=${\overline{E}_{1}}$, o-o] (-2,0)
+				(4,-2.1) to[open, v_>=${\overline{E}_{2}}$, o-o] (4,0)
+				;
+\end{tikzpicture}
+\end{center}
+
+\begin{center}
+\begin{tikzpicture}[
+	line width=.9pt, 
+  circuitikz/bipoles/thickness=.9,
+	european resistors,
+	american voltages]
+	\shorthandoff{> <}
+    \draw    
+		    (0,0) node[transformer] (T1) {} %trafo en primario ó 1
+				($(T1.base)+(0,.2)$) node{K}
+				(T1.B1) to[short] (1,0)	
+					to[R, l^=${\overline{Z}_{1}^X}$] (3.5,0)
+					to[short, -*] (4,0)
+				
+				(4,0) to[R, l^=${\overline{Z}_{2}^X}$] (5.5,2)
+				(5.5,2) node[transformer, anchor=A1] (T2) {}
+				($(T2.base)+(0,.2)$) node{K}
+
+				(4,0) to[R, l^=${\overline{Z}_{3}^X}$] (5.5,-2)
+				(5.5,-2) node[transformer, anchor=A1] (T3) {}
+				($(T3.base)+(0,.2)$) node{K}
+					
+					
+				(T1.B2) to[short, -*] (4,-2.1)
+				(4,-2.1) to[short] (T2.A2)
+				(4,-2.1) to[short] (T3.A2)
+				
+				;
+\end{tikzpicture}
+\end{center}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+CdeIEBT\\
+
+\begin{center}
+\begin{tikzpicture}[
+	line width=.9pt, 
+  circuitikz/bipoles/thickness=.9,
+	european resistors]
+	\shorthandoff{> <}
+	
+	  \coordinate (A) at (0,0);
+		%\coordinate (X) at ($(A)+(99,99)$);
+		
+    \draw [american voltages]   
+		%"($(A)$) to[short] ++(1,0)" es equivalente a "($(A)$) to[short] ($(A)+(1,0)$)"
+		%2º caso de línea anterior ta vez es útil en ocasiones como: "($(A)$) to[short] ($(B)+(1,0)$)"
+				
+				($(A)$) to[short] ++(1,0)
+				 to [R, l^=$DDR\,(300\,mA)$, color=red] ++(2,0)	
+				 to [ammeter] ++(2,0)
+				 to [vR, l^=$R_{def}$, i=$\overline{I}_{def}$] ++(3,0) node (B){}
+				
+				($(A)$) to[short] ++(0,-1)
+			    to [sV=] ++(0,-2)
+					to node [ground, rotate =0]{} ++(0,0)
+				($(A)+(0,-1)$) to [open, v_<=\hspace{-9mm}$\overline{V}_{F}$] ++(0,-2)
+				
+				(B) to [cspst] ++(4,0)
+				 to [ammeter, i=$\overline{I}_{c}$] ++(0,-2) node (Vca1){}%Vca de tensión de contacto aplicada
+				 to [american resistor, l^=$R_{H}$, v_<=\hspace{-9mm}$\overline{V}_{ca}$] ++(0,-2)
+				 to [american resistor, l^=$R_{S}$] ++(0,-2) node (Vca2){}%Vca de tensión de contacto aplicada
+				 to node [ground, rotate =0]{} ++(0,0)
+				
+				($(Vca1)+(-1,+1)$) to[open, v_<=\hspace{-9mm}$\overline{V}_{c}$] ($(Vca2)+(-1,-1)$)% debería ser "($(Vca1)+(-1,0)$)" y "($(Vca2)+(-1,0)$)", pero no sale como debería
+				
+				;
+				
+		\draw[european voltages]
+				(Vca1) to [short] ++(3,0) node (Vc){}%Vca de tensión de contacto
+				 to [voltmeter] ++(0,-2)
+				 to [short] ++(-3,0)
+				
+				(Vc) to [short] ++(2,0)
+				to [voltmeter] ++(0,-4)
+				 to [short] (Vca2)
+				
+				(B) to [cspst] ++(0,-2)
+				 to [american resistor, l^=$R_{E}$] ++(0,-2)
+				 to node [ground]{} ++(0,0)
+				
+				;
+\end{tikzpicture}
+\end{center}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Si no toca un humano, $R_H=\infty$ y variando $I_{d}$ y $R_{def}$
+
+\begin{center}
+\begin{tikzpicture}[
+	line width=.9pt, 
+  circuitikz/bipoles/thickness=.9,
+	european resistors,
+	american voltages]
+	\shorthandoff{> <}
+	
+	  \coordinate (A) at (0,0);
+		%\coordinate (X) at ($(A)+(99,99)$);
+		
+    \draw  
+		%"($(A)$) to[short] ++(1,0)" es equivalente a "($(A)$) to[short] ($(A)+(1,0)$)"
+		%2º caso de línea anterior ta vez es útil en ocasiones como: "($(A)$) to[short] ($(B)+(1,0)$)"
+				
+				($(A)$) to[short] ++(1,0)
+				 to [american resistor, l^=$R_{def}$, i=$\overline{I}_{def}$] ++(2,0)	
+				 to [myammeterH] ++(2,0)
+				 to [R, l^=$DDR$, color=red] ++(3,0) node (B){}
+				
+				($(A)$) to[short] ++(0,-1)
+			    to [sV=] ++(0,-2)
+					to [american resistor, l^=$R_B$] ++(0,-2)
+					to node [ground, rotate =0]{} ++(0,0)
+				($(A)+(0,-1)$) to [open, v_<=\hspace{-9mm}$\overline{V}_{F}$] ++(0,-2)
+				
+				(B) to [cspst] ++(0,-2)
+				 to [american resistor, l^=$R_{E}$] ++(0,-2)
+				 to node [ground]{} ++(0,0)
+				
+				;
+\end{tikzpicture}
+\end{center}
+
+
+
+\textcolor{blue} {Sustituyendo con DDR de sensibilidad 30 mA \'o 300 mA, el disparo es seguro si $R_{def}$ vale:}
+
+
+$
+\color{blue}
+R_{def}
+=U_F/Id-\left(R_B+R_E\right)
+\left\{
+\begin{array}{lll}
+  \,\xRightarrow[Id\geq 30\,mA\,=\,I_{\Delta n}]\,
+    \left\{
+    \begin{array}{lll}
+    \,\xRightarrow[Id\geq 30 mA\,=\,I_{\Delta n}]{R_E=3\,\Omega}\, 
+		R_{def}
+    \leq 230/(30\cdot 10^{-3})-\left(30+3\right)
+		&=\,7.6337\, k\Omega\vspace{2mm}\\
+		\,\xRightarrow[Id\geq 30 mA\,=\,I_{\Delta n}]{R_E=9\,\Omega}\, 
+		R_{def}
+    \leq 230/(30\cdot 10^{-3})-\left(30+9\right)
+		&=\,7.6277\, k\Omega\vspace{2mm}\\
+		\,\xRightarrow[Id\geq 30 mA\,=\,I_{\Delta n}]{R_E=35\,\Omega}\, 
+		R_{def}
+    \leq 230/(30\cdot 10^{-3})-\left(30+35\right)
+		&=\,7.6017\, k\Omega\vspace{2mm}\\
+		\,\xRightarrow[Id\geq 30 mA\,=\,I_{\Delta n}]{R_E=790\,\Omega}\, 
+		R_{def}
+    \leq 230/(30\cdot 10^{-3})-\left(30+790\right)
+		&=\,6.8467\, k\Omega\vspace{2mm}\\
+		\,\xRightarrow[Id\geq 30 mA\,=\,I_{\Delta n}]{R_E=\infty\,\Omega}\, 
+		R_{def}
+    \leq 230/(30\cdot 10^{-3})-\left(30+\infty\right)
+		&=-\infty\,\Omega
+		\end{array}
+    \right.
+	\vspace{2mm}\\
+	\,\xRightarrow[Id\geq 300\,mA\,=\,I_{\Delta n}]\,
+    \left\{
+    \begin{array}{lll}
+    \,\xRightarrow[Id\geq 300 mA\,=\,I_{\Delta n}]{R_E=3\,\Omega}\, 
+		R_{def}
+    \leq 230/(300\cdot 10^{-3})-\left(30+3\right)
+		&=\,733.6667\,\Omega\vspace{2mm}\\
+		\,\xRightarrow[Id\geq 300 mA\,=\,I_{\Delta n}]{R_E=9\,\Omega}\, 
+		R_{def}
+    \leq 230/(300\cdot 10^{-3})-\left(30+9\right)
+		&=\,727.6667\,\Omega\vspace{2mm}\\
+		\,\xRightarrow[Id\geq 300 mA\,=\,I_{\Delta n}]{R_E=35\,\Omega}\, 
+		R_{def}
+    \leq 230/(300\cdot 10^{-3})-\left(30+35\right)
+		&=\,701.6667\,\Omega\vspace{2mm}\\
+		\,\xRightarrow[Id\geq 300 mA\,=\,I_{\Delta n}]{R_E=790\,\Omega}\, 
+		R_{def}
+    \leq 230/(300\cdot 10^{-3})-\left(30+790\right)
+		&=\,-53.3333\,\Omega\vspace{2mm}\\
+		\,\xRightarrow[Id\geq 300 mA\,=\,I_{\Delta n}]{R_E=\infty\,\Omega}\, 
+		R_{def}
+    \leq 230/(300\cdot 10^{-3})-\left(30+\infty\right)
+		&=-\infty\,\Omega
+		\end{array}
+    \right.
+\end{array}
+\right.
+$\vspace{10mm}
+
+$
+\color{blue}
+\begin{array}{ccccccccc}
+I_{def}
+&=
+&\dfrac{U_F}{R_B+R_{def}+R_E}
+&=
+&\dfrac{230}{820+R_{def}}\vspace{2mm}\\
+V_c
+&=
+&I_{def}\cdot R_{E}
+&=
+&I_{def}\cdot 790
+\end{array}
+\left\{
+\begin{array}{llll}
+  R_{def}=0\,\Omega\Rightarrow\,
+	\left\{
+	\begin{array}{llll}
+    I_{def}
+	  =\dfrac{230}{820+0}
+	  &=0.2805\,A\vspace{2mm}\\
+	  V_c
+	  =0.2805\cdot 790
+	  &=221.50\,V
+	\end{array}
+	\right.
+	\vspace{2mm}\\
+	R_{def}=5\,k\Omega\Rightarrow\,
+	\left\{
+	\begin{array}{llll}
+    I_{def}
+	  =\dfrac{230}{820+5000}
+	  &=0.0395\,A\vspace{2mm}\\
+	  V_c
+	  =0.0395\cdot 790
+	  &=31.22\,V
+	\end{array}
+	\right.
+	\vspace{2mm}\\
+	R_{def}=10\,k\Omega\Rightarrow\,
+	\left\{
+	\begin{array}{llll}
+    I_{def}
+	  =\dfrac{230}{820+10000}
+	  &=0.0213\,A\vspace{2mm}\\
+	  V_c
+	  =0.0213\cdot 790
+	  &=16.7930\,V
+	\end{array}
+	\right.
+	\vspace{2mm}\\
+	R_{def}=15\,k\Omega\Rightarrow\,
+	\left\{
+	\begin{array}{llll}
+    I_{def}
+	  =\dfrac{230}{820+15000}
+	  &=0.0145\,A\vspace{2mm}\\
+	  V_c
+	  =0.0145\cdot 790
+	  &=11.4855\,V
+	\end{array}
+	\right.
+\end{array}
+\right.
+$
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\begin{center}
+\begin{tikzpicture}[
+	line width=.9pt, 
+  circuitikz/bipoles/thickness=.9,
+	european resistors,
+	american voltages]
+	\shorthandoff{> <}
+	
+	  \coordinate (A) at (0,0);
+		%\coordinate (X) at ($(A)+(99,99)$);
+		
+    \draw  
+		%"($(A)$) to[short] ++(1,0)" es equivalente a "($(A)$) to[short] ($(A)+(1,0)$)"
+		%2º caso de línea anterior ta vez es útil en ocasiones como: "($(A)$) to[short] ($(B)+(1,0)$)"
+				
+				($(A)$) to[short] ++(1,0)
+				 to [american resistor, l^=$R_{def}$, i=$\overline{I}_{def}$] ++(2,0)	
+				 to [myammeterH] ++(2,0)
+				 to [R, l^=$DDR\,(30\,mA)$, color=red] ++(3,0) node (B){}
+								
+				($(A)$) to[short] ++(0,-1)
+			    to [sV=] ++(0,-2)
+					to [american resistor, l^=$R_B$] ++(0,-2)
+					to node [ground, rotate =0]{} ++(0,0)
+				($(A)+(0,-1)$) to [open, v_<=\hspace{-9mm}$\overline{V}_{F}$] ++(0,-2)
+				
+				(B) to [short] ++(4,0) node (Vca1){}%Vca de tensión de contacto aplicada
+				 to [open, o-o ] ++(0,-3) 
+				 to [american resistor, l^=$R_{H}$, v_<=\hspace{-9mm}$\overline{V}_{ca}$] ++(0,-2)
+				 to [american resistor, l^=$R_{S}$] ++(0,-2) node (Vca2){}%Vca de tensión de contacto aplicada
+				 to node [ground, rotate =0]{} ++(0,0)
+				
+				($(Vca1)+(-1,+2)$) to[open, v_<=\hspace{-9mm}$\overline{V}_{c}$] ($(Vca2)+(-1,-3)$)% debería ser "($(Vca1)+(-1,0)$)" y "($(Vca2)+(-1,0)$)", pero no sale como debería
+				
+				(Vca1) to [short] ++(3,0) node (Vc){}%Vca de tensión de contacto
+				 to [myvoltmeterV] ++(0,-5)
+				 to [short] ++(-3,0)
+				
+				(Vc) to [short] ++(2,0)
+				to [myvoltmeterV] ++(0,-7)
+				 to [short] (Vca2)
+				
+				(B) to [short] ++(0,-2)
+				 to [american resistor, l^=$R_{E}$] ++(0,-2)
+				 to node [ground]{} ++(0,0)
+				
+				;
+\end{tikzpicture}
+\end{center}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+
+\begin{center}
+\begin{tikzpicture}[
+	line width=.9pt, 
+  circuitikz/bipoles/thickness=.9,
+	european resistors,
+	american voltages]
+	\shorthandoff{> <}
+	
+	  \coordinate (A) at (0,0);
+		%\coordinate (X) at ($(A)+(99,99)$);
+		
+    \draw  
+		%"($(A)$) to[short] ++(1,0)" es equivalente a "($(A)$) to[short] ($(A)+(1,0)$)"
+		%2º caso de línea anterior ta vez es útil en ocasiones como: "($(A)$) to[short] ($(B)+(1,0)$)"
+				
+				($(A)$) to[short] ++(1,0)
+				 to [american resistor, l^=$R_{def}$, i=$\overline{I}_{def}$] ++(2,0)	
+				 to [myammeterH] ++(2,0)
+				 to [R, l^=$DDR\,(30\,mA)$, color=red] ++(3,0) node (B){}
+								
+				($(A)$) to[short] ++(0,-1)
+			    to [sV=] ++(0,-2)
+					to [american resistor, l^=$R_B$] ++(0,-2)
+					to node [ground, rotate =0]{} ++(0,0)
+				($(A)+(0,-1)$) to [open, v_<=\hspace{-9mm}$\overline{V}_{F}$] ++(0,-2)
+				
+				(B) to [myammeterH, i=$\overline{I}_{c}$] ++(4,0) node (Vca1){}%Vca de tensión de contacto aplicada
+				 to [cspst] ++(0,-3) 
+				 to [american resistor, l^=$R_{H}$, v_<=\hspace{-9mm}$\overline{V}_{ca}$] ++(0,-2)
+				 to [american resistor, l^=$R_{S}$] ++(0,-2) node (Vca2){}%Vca de tensión de contacto aplicada
+				 to node [ground, rotate =0]{} ++(0,0)
+				
+				($(Vca1)+(-1,+2)$) to[open, v_<=\hspace{-9mm}$\overline{V}_{c}$] ($(Vca2)+(-1,-3)$)% debería ser "($(Vca1)+(-1,0)$)" y "($(Vca2)+(-1,0)$)", pero no sale como debería
+				
+				(Vca1) to [short] ++(3,0) node (Vc){}%Vca de tensión de contacto
+				 to [myvoltmeterV] ++(0,-5)
+				 to [short] ++(-3,0)
+				
+				(Vc) to [short] ++(2,0)
+				to [myvoltmeterV] ++(0,-7)
+				 to [short] (Vca2)
+				
+				(B) to [short, *-*] ++(0,-2)
+				 to [american resistor, l^=$R_{E}$] ++(0,-2)
+				 to node [ground]{} ++(0,0)
+				
+				;
+\end{tikzpicture}
+\end{center}
+
+
+\textcolor{blue} {Sustituyendo con $R_B=30\,\Omega$, $R_E=790\,\Omega$, $R_H=2500\,\Omega$ y variando $R_{def}$ y $R_S$:}
+
+$
+\color{blue}
+\begin{array}{ccc}
+I_{def}
+&=
+&\dfrac{U_F}{R_B+R_{def}+\dfrac{R_E\cdot(R_H+R_S)}{R_E+(R_H+R_S)}}\vspace{2mm}\\
+V_c
+&=
+&I_{def}\cdot\dfrac{R_E\cdot(R_H+R_S)}{R_E+(R_H+R_S)}\vspace{2mm}\\
+I_c
+&=
+&\dfrac{V_c}{R_H+R_S}\vspace{2mm}\\
+V_{ca}
+&=
+&I_c\cdot R_H
+\end{array}
+$
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\begin{center}
+\begin{tikzpicture}[
+	line width=.9pt, 
+  circuitikz/bipoles/thickness=.9,
+	european resistors,
+	american voltages]
+	\shorthandoff{> <}
+	
+	  \coordinate (A) at (0,0);
+		%\coordinate (X) at ($(A)+(99,99)$);
+		
+    \draw  
+		%"($(A)$) to[short] ++(1,0)" es equivalente a "($(A)$) to[short] ($(A)+(1,0)$)"
+		%2º caso de línea anterior ta vez es útil en ocasiones como: "($(A)$) to[short] ($(B)+(1,0)$)"
+				
+				($(A)$) to[short] ++(1,0)
+				 to [american resistor, l^=$R_{def}$, i=$\overline{I}_{def}$] ++(2,0)	
+				 to [myammeterH] ++(2,0)
+				 to [R, l^=$DDR\,(30\,mA)$, color=red] ++(3,0) node (B){}
+								
+				($(A)$) to[short] ++(0,-1)
+			    to [sV=] ++(0,-2)
+					to [american resistor, l^=$R_B$] ++(0,-2)
+					to node [ground, rotate =0]{} ++(0,0)
+				($(A)+(0,-1)$) to [open, v_<=\hspace{-9mm}$\overline{V}_{F}$] ++(0,-2)
+				
+				(B) to [short] ++(4,0) node (Vca1){}%Vca de tensión de contacto aplicada
+				 to [open, o-o] ++(0,-3) 
+				 to [american resistor, l^=$R_{H}$, v_<=\hspace{-9mm}$\overline{V}_{ca}$] ++(0,-2)
+				 to [american resistor, l^=$R_{S}$] ++(0,-2) node (Vca2){}%Vca de tensión de contacto aplicada
+				 to node [ground, rotate =0]{} ++(0,0)
+				
+				($(Vca1)+(-1,+2)$) to[open, v_<=\hspace{-9mm}$\overline{V}_{c}$] ($(Vca2)+(-1,-3)$)% debería ser "($(Vca1)+(-1,0)$)" y "($(Vca2)+(-1,0)$)", pero no sale como debería
+				
+				(Vca1) to [short] ++(3,0) node (Vc){}%Vca de tensión de contacto
+				 to [myvoltmeterV] ++(0,-5)
+				 to [short] ++(-3,0)
+				
+				(Vc) to [short] ++(2,0)
+				to [myvoltmeterV] ++(0,-7)
+				 to [short] (Vca2)
+				
+				(B) to [open, o-o] ++(0,-2)
+				 to [american resistor, l^=$R_{E}$] ++(0,-2)
+				 to node [ground]{} ++(0,0)
+				
+				;
+\end{tikzpicture}
+\end{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+
+\textcolor{blue} {Sustituyendo con $R_B=30\,\Omega$, $R_H=2500\,\Omega$ y variando $R_{def}$ y $R_S$:}
+
+$
+\color{blue}
+\begin{array}{ccc}
+I_{def}
+&=
+&\dfrac{U_F}{R_B+R_{def}+R_H+R_S}\vspace{2mm}\\
+V_c
+&=
+&I_{def}\cdot(R_H+R_S)\vspace{2mm}\\
+V_{ca}
+&=
+&I_{def}\cdot R_H
+\end{array}
+$\vspace{10mm}
+
+\textcolor{blue} {El caso peor posible si se corta la puesta a tierra de las masas es con $I_{def}$ justo por debajo de la sensiblidad del DDR y $R_s=0$, ya que $V_{ca}$ maxima y de valor 75 $V$: }
+
+$
+\color{blue}
+\begin{array}{ccccccc}
+R_{def}
+&=
+&\dfrac{U_F}{I_{def}}-(R_B+R_H+R_S)
+&=
+&\dfrac{230}{30\cdot 10^{-3}}-(30+2500+0)
+&=
+&5.14\,k\Omega\vspace{2mm}\\
+V_{ca}
+&=
+&I_{def}\cdot R_H
+&=
+&30\cdot 10^{-3}\cdot 2500
+&=
+&75\,V
+\end{array}
+$
+
+\begin{center}
+\begin{tikzpicture}[
+	line width=.9pt, 
+  circuitikz/bipoles/thickness=.9,
+	european resistors,
+	american voltages]
+	\shorthandoff{> <}
+	
+	  \coordinate (A) at (0,0);
+		%\coordinate (X) at ($(A)+(99,99)$);
+		
+    \draw  
+		%"($(A)$) to[short] ++(1,0)" es equivalente a "($(A)$) to[short] ($(A)+(1,0)$)"
+		%2º caso de línea anterior ta vez es útil en ocasiones como: "($(A)$) to[short] ($(B)+(1,0)$)"
+				
+				($(A)$) to[short] ++(1,0)
+				 to [american resistor, l^=$R_{def}$, i=$\overline{I}_{def}$] ++(2,0)	
+				 to [myammeterH] ++(2,0)
+				 to [R, l^=$DDR\,(30\,mA)$, color=red] ++(3,0) node (B){}
+								
+				($(A)$) to[short] ++(0,-1)
+			    to [sV=] ++(0,-2)
+					to [american resistor, l^=$R_B$] ++(0,-2)
+					to node [ground, rotate =0]{} ++(0,0)
+				($(A)+(0,-1)$) to [open, v_<=\hspace{-9mm}$\overline{V}_{F}$] ++(0,-2)
+				
+				(B) to [short] ++(4,0) node (Vca1){}%Vca de tensión de contacto aplicada
+				 to [cspst ] ++(0,-3) 
+				 to [american resistor, l^=$R_{H}$, v_<=\hspace{-9mm}$\overline{V}_{ca}$] ++(0,-2)
+				 to [american resistor, l^=$R_{S}$] ++(0,-2) node (Vca2){}%Vca de tensión de contacto aplicada
+				 to node [ground, rotate =0]{} ++(0,0)
+				
+				($(Vca1)+(-1,+2)$) to[open, v_<=\hspace{-9mm}$\overline{V}_{c}$] ($(Vca2)+(-1,-3)$)% debería ser "($(Vca1)+(-1,0)$)" y "($(Vca2)+(-1,0)$)", pero no sale como debería
+				
+				(Vca1) to [short] ++(3,0) node (Vc){}%Vca de tensión de contacto
+				 to [myvoltmeterV] ++(0,-5)
+				 to [short] ++(-3,0)
+				
+				(Vc) to [short] ++(2,0)
+				to [myvoltmeterV] ++(0,-7)
+				 to [short] (Vca2)
+				
+				(B) to [open, o-o] ++(0,-2)
+				 to [american resistor, l^=$R_{E}$] ++(0,-2)
+				 to node [ground]{} ++(0,0)
+				
+				;
+\end{tikzpicture}
+\end{center}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newpage
+%...\\
+
+\end{document}
